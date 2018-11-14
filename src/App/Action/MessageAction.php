@@ -13,18 +13,30 @@ use Zend\Expressive\Plates\PlatesRenderer;
 use Zend\Expressive\Twig\TwigRenderer;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 
-class HomePageAction implements ServerMiddlewareInterface
+class MessageAction implements ServerMiddlewareInterface
 {
     private $router;
-
+    private $container;
     private $template;
 
-    public function __construct(Router\RouterInterface $router, Template\TemplateRendererInterface $template = null)
+    /**
+     * MessageAction constructor.
+     * @param Router\RouterInterface $router
+     * @param Template\TemplateRendererInterface|null $template
+     * @param ContainerInterface $container
+     */
+    public function __construct(Router\RouterInterface $router, Template\TemplateRendererInterface $template = null, ContainerInterface $container)
     {
         $this->router   = $router;
         $this->template = $template;
+        $this->container = $container;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param DelegateInterface $delegate
+     * @return \Psr\Http\Message\ResponseInterface|HtmlResponse|JsonResponse
+     */
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         if (! $this->template) {
