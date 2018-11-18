@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
-class MessageFactory
+class GetLogFactory
 {
     public function __invoke(ContainerInterface $container)
     {
@@ -17,6 +17,6 @@ class MessageFactory
 
         $em = $container->get('doctrine.entity_manager.orm_default');
 
-        return new MessageAction($container, $em );
+        return new GetLogAction($container, $em );
     }
 }

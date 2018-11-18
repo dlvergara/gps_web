@@ -38,6 +38,9 @@ class ConfigProvider
             ],
             'factories'  => [
                 Action\HomePageAction::class => Action\HomePageFactory::class,
+                Action\MessageAction::class => Action\MessageFactory::class,
+                Action\GetLogAction::class => Action\GetLogFactory::class,
+                Action\GetGeoLogAction::class => Action\GetGeoLogFactory::class,
             ],
         ];
     }

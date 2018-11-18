@@ -3,7 +3,6 @@
 namespace App\Action;
 
 use App\Entity\MessageLog;
-use App\Model\SaveGeoLog;
 use Doctrine\ORM\EntityManager;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface as ServerMiddlewareInterface;
@@ -11,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
-class MessageAction implements ServerMiddlewareInterface
+class GetLogAction implements ServerMiddlewareInterface
 {
     private $container;
     private $entityManager;
@@ -35,31 +34,12 @@ class MessageAction implements ServerMiddlewareInterface
      */
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
-        $success = false;
-        $error = null;
-        $dataParsed = $request->getParsedBody();
-        $appUrl = dirname(dirname(dirname(__DIR__)));
-
-        try {
-            $motorcycle = $this->entityManager->getRepository('App\Entity\Motorcycle')
-                ->findOneBy(['identifier' => $dataParsed['from']]);
-
-            $messageLog = $this->saveMessageLog($dataParsed);
-
-            if ($motorcycle) {
-                $saveGeoLog = new SaveGeoLog($motorcycle, $messageLog, $this->entityManager);
-                $success = $saveGeoLog->saveGeoLog($dataParsed);
-            }
-            //file_put_contents($appUrl."/data/log/log_Parsed_".date('Y_m_d_H_i_s').'.txt', print_r($dataParsed,true));
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
-            file_put_contents($appUrl."/data/log/log_".date('Y_m_d_H_i_s').'.txt', print_r($e,true));
-        }
+        $messages = $this->entityManager->getRepository('App\Entity\MessageLog')
+            ->findBy([], ['id_message_log' => "DESC"], 10);
 
         return new JsonResponse([
-            "payload" => [
-                "success" => $success,
-                "error" => $error,
+            "data" => [
+                $messages
             ],
         ]);
     }
@@ -69,7 +49,7 @@ class MessageAction implements ServerMiddlewareInterface
      * @return MessageLog
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function saveMessageLog($dataParsed = array())
+    public function saveMessageLog($dataParsed=array())
     {
         $messageLog = new MessageLog();
         $messageLog->setFrom($dataParsed['from']);
