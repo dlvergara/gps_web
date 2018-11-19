@@ -9,10 +9,12 @@
 <br>
 Map:
 <form action="/home" method="get" >
-    <input type="date" name="fecha" value="<?= date('Y-m-d') ?>" />
+    Fecha inicio: <input type="date" name="fecha" value="<?= date('Y-m-d') ?>" />
+    Fecha fin: <input type="date" name="fechaFin" value="<?= date('Y-m-d') ?>" />
     <input type="submit" >
 </form>
 <br>
+Count: <?= count($geo_log) ?>
     <pre>
 <?php
 if( !empty($geo_log) ) {
