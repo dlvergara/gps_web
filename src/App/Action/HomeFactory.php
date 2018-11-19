@@ -18,6 +18,6 @@ class HomeFactory
 
         $entityManager = $container->get('doctrine.entity_manager.orm_default');
 
-        return new HomeAction($router, $template, $entityManager);
+        return new HomeAction($router, $template, $entityManager, $container);
     }
 }
