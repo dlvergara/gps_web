@@ -33,3 +33,4 @@ $app->get('/api/ping', App\Action\PingAction::class, 'api.ping');
 $app->post('/message', App\Action\MessageAction::class, 'message.post');
 $app->get('/message', App\Action\GetLogAction::class, 'message.get');
 $app->get('/geolog', App\Action\GetGeoLogAction::class, 'geolog.get');
+$app->get('/home[/{fecha}]', App\Action\HomeAction::class, 'home.get');

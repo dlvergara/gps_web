@@ -59,7 +59,7 @@ class SaveGeoLog
             }
             $result = true;
         } catch (\Exception $exception) {
-            var_dump( $exception->getMessage() ); exit;
+            var_dump( $exception->getMessage() );
             error_log($exception);
         }
         return $result;
@@ -79,8 +79,13 @@ class SaveGeoLog
         $geoLog->setDate($date[1]);
         $time = explode(":", $messageData[2]);
         $geoLog->setTime($time[1]);
+
+        $messageDateTime = $date[1].' '.$time[1].':'.$time[2];
+        $processedDate = date( "Y-m-d H:i:s", strtotime( $messageDateTime ) - 12 * 3600 );
+        $geoLog->setProcesedDateTime($processedDate);
+
         $speed = explode(":", $messageData[5]);
-        $geoLog->setSpeed($speed[1]);
+        $geoLog->setSpeed(intval(str_ireplace("KM/H", "", $speed[1])));
         $bat = explode(":", $messageData[6]);
         $geoLog->setBat($bat[1]);
 
@@ -117,7 +122,8 @@ class SaveGeoLog
         $long = explode(":", $messageData[2]);
         $geoLog->setLongitude($long[1]);
 
-        $geoLog->setLink($messageData[5]);
+        $link = str_replace("\n\r", "", $messageData[6]);
+        $geoLog->setLink($link);
 
         $date = explode(":", $messageData[4]);
         $date = $date[1].' '.$messageData[5];
@@ -125,7 +131,7 @@ class SaveGeoLog
 
         $geoLog->setProcesedDateTime($processedDate);
         $geoLog->setTime($messageData[5]);
-        $geoLog->setDate($date);
+        $geoLog->setDate(date( "Y-m-d H:i:s", strtotime( $date )));
 
         $speed = explode(":", $messageData[3]);
         $geoLog->setSpeed(intval($speed[1]));

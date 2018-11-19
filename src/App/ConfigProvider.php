@@ -41,6 +41,7 @@ class ConfigProvider
                 Action\MessageAction::class => Action\MessageFactory::class,
                 Action\GetLogAction::class => Action\GetLogFactory::class,
                 Action\GetGeoLogAction::class => Action\GetGeoLogFactory::class,
+                Action\HomeAction::class => Action\HomeFactory::class,
             ],
         ];
     }

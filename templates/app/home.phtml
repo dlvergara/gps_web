@@ -1,0 +1,96 @@
+<?php $this->layout('layout::default', ['title' => 'Home']) ?>
+<style>
+    /* Always set the map height explicitly to define the size of the div
+     * element that contains the map. */
+    #map {
+        height: 400px;
+    }
+</style>
+<br>
+Map:
+<form action="/home" method="get" >
+    <input type="date" name="fecha" value="<?= date('Y-m-d') ?>" />
+    <input type="submit" >
+</form>
+<br>
+    <pre>
+<?php
+if( !empty($geo_log) ) {
+    print_r($geo_log[0]->jsonSerialize());
+}
+?>
+    </pre>
+<br>
+<div id="map"></div>
+<script>
+    var datos = <?= json_encode($geo_log) ?>;
+    var map;
+    function initMap() {
+        var mapOptions = {
+            zoom: 12,
+            center: new google.maps.LatLng(-12.089430,-77.025060),
+            mapTypeId: 'terrain'
+        };
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        var trafficLayer = new google.maps.TrafficLayer();
+        trafficLayer.setMap(map);
+
+        var marker = new google.maps.Marker({
+            position: {lat: -12.089430,lng: -77.025060},
+            map: map,
+            title: 'Home'
+        });
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+
+        console.log(datos);
+        var conteo = 0;
+
+        datos.forEach(function(element) {
+
+            var latitude = Number(element.latitude);
+            var longitude = Number(element.longitude);
+
+            var marker = new google.maps.Marker({
+                position: {lat: latitude, lng: longitude},
+                map: map,
+                title: 'Moto: '+conteo+' -> Date: '+element.procesed_date_time
+            });
+
+            //http://maps.google.com/mapfiles/ms/icons/purple-dot.png
+            switch (element.motorcycle_id_motorcycle) {
+                case 1:
+                    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                    break;
+                case 2:
+                    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+                    break;
+            }
+
+            if( conteo == 0 ) {
+                marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+                var center = new google.maps.LatLng(latitude, longitude);
+                map.panTo(center);
+            }
+            conteo++;
+        });
+    }
+
+    // Loop through the results array and place a marker for each
+    // set of coordinates.
+    /*
+    window.eqfeed_callback = function(results) {
+        for (var i = 0; i < results.features.length; i++) {
+            var coords = results.features[i].geometry.coordinates;
+            var latLng = new google.maps.LatLng(coords[1],coords[0]);
+            var marker = new google.maps.Marker({
+                position: latLng,
+                map: map
+            });
+        }
+    }
+    */
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=<?= $map_key ?>&callback=initMap">
+</script>

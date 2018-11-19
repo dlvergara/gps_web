@@ -35,7 +35,7 @@ class GetGeoLogAction implements ServerMiddlewareInterface
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         $messages = $this->entityManager->getRepository('App\Entity\GeoLog')
-            ->findBy([], ['id_geo_log' => "DESC"], 10);
+            ->findBy([], ['procesed_date_time' => "DESC",], 10);
         
         return new JsonResponse([
             "data" => [
