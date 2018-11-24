@@ -11,6 +11,11 @@ Map:
 <form action="/home" method="get" >
     Fecha inicio: <input type="date" name="fecha" value="<?= date('Y-m-d') ?>" />
     Fecha fin: <input type="date" name="fechaFin" value="<?= date('Y-m-d') ?>" />
+    Moto: <select name="moto" >
+        <option value="">Seleccione...</option>
+        <option value="1">Moto 1</option>
+        <option value="2">Moto 2</option>
+    </select>
     <input type="submit" >
 </form>
 <br>
@@ -47,6 +52,7 @@ if( !empty($geo_log) ) {
 
         console.log(datos);
         var conteo = 0;
+        var moto = 1;
 
         datos.forEach(function(element) {
 
@@ -56,7 +62,7 @@ if( !empty($geo_log) ) {
             var marker = new google.maps.Marker({
                 position: {lat: latitude, lng: longitude},
                 map: map,
-                title: 'Moto: '+conteo+' -> Date: '+element.procesed_date_time
+                title: 'Moto: '+element.motorcycle_id_motorcycle+' -> Date: '+element.procesed_date_time
             });
 
             //http://maps.google.com/mapfiles/ms/icons/purple-dot.png

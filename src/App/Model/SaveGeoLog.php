@@ -73,8 +73,17 @@ class SaveGeoLog
     {
         $messageData = explode(" ", $originalMessage['message']);
 
+        //http://maps.google.com/maps?q=-12.09691,-077.02439
+
+        $coordinates = str_replace("http://maps.google.com/maps?q=", "", $messageData[0]);
+        $coordinates = explode(",", $coordinates);
+
         $geoLog = new GeoLog();
         $geoLog->setLink($messageData[0]);
+
+        $geoLog->setLatitude($coordinates[0]);
+        $geoLog->setLongitude($coordinates[1]);
+
         $date = explode(":", $messageData[1]);
         $geoLog->setDate($date[1]);
         $time = explode(":", $messageData[2]);

@@ -52,8 +52,9 @@ class HomeAction implements ServerMiddlewareInterface
         $config = $this->container->get('config');
         $fecha = $this->getAttr($request, 'fecha');
         $fechaFin = $this->getAttr($request, 'fechaFin');
+        $idMoto = $this->getAttr($request, 'moto');
 
-        $messages = $this->getData($fecha, $fechaFin);
+        $messages = $this->getData($fecha, $fechaFin, $idMoto);
 
         $data = [];
         $data['geo_log'] = $messages;
@@ -85,7 +86,7 @@ class HomeAction implements ServerMiddlewareInterface
      * @param $fechaInicio
      * @return array
      */
-    public function getData($fecha, $fechaFin)
+    public function getData($fecha = "", $fechaFin = "", $idMoto = "")
     {
         $alias = 't';
         $order = ['motorcycle_id_motorcycle' => "ASC", 'procesed_date_time' => "DESC",];
@@ -94,6 +95,11 @@ class HomeAction implements ServerMiddlewareInterface
         $qb->select($alias)
             ->from('App\Entity\GeoLog', $alias)
             ->where($alias . '.latitude IS NOT NULL');
+
+        if (!empty($idMoto)) {
+            $qb->andWhere($alias . '.motorcycle_id_motorcycle = :idMoto');
+            $qb->setParameter('idMoto', $idMoto);
+        }
 
         if (!empty($fecha) && !empty($fechaFin)) {
             $qb->andWhere($alias . '.procesed_date_time BETWEEN :fecha AND :fechaFin');
@@ -113,7 +119,7 @@ class HomeAction implements ServerMiddlewareInterface
         foreach ($order as $key => $info) {
             $qb->addOrderBy($alias . '.' . $key, $info);
         }
-        
+
         $messages = $qb->getQuery()->getResult();
 
         return $messages;
